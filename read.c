@@ -53,11 +53,15 @@ int main(void){
 	}
 	sem_t *sem_1 = sem_open(SEM_1, 0);
 	sem_t *sem_2 = sem_open(SEM_2, 1);
-
-	sem_wait(sem_1);
-	printf("Poruka:\n%s", block);
-	sem_post(sem_2);
-
+	while(true){
+		sem_wait(sem_1);
+		if(strcmp(block, "kraj\n") == 0){
+			sem_post(sem_2);
+			break;
+		}
+		printf("Poruka:\n%s", block);
+		sem_post(sem_2);
+	}
 	sem_close(sem_2);
 	sem_close(sem_1);
 	detach_block(block);

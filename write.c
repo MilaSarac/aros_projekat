@@ -56,13 +56,17 @@ int main(){
 	sem_t *sem_1 = sem_open(SEM_1, O_CREAT, 0660, 0);
 	sem_t *sem_2 = sem_open(SEM_2, O_CREAT, 0660, 1);
 	char buffer[BLOCK_SIZE];
-
-	sem_wait(sem_2);
-	printf("Unesite poruku:\n");
-	fgets(buffer, BLOCK_SIZE, stdin);
-	strncpy(block, buffer, BLOCK_SIZE);;
-	sem_post(sem_1);
-
+	while(true){
+		sem_wait(sem_2);
+		printf("Unesite poruku(Unesite \"kraj\" za prekid unosa):\n");
+		fgets(buffer, BLOCK_SIZE, stdin);
+		strncpy(block, buffer, BLOCK_SIZE);
+		if(strcmp(block, "kraj\n") == 0){
+			sem_post(sem_1);
+			break;
+		}
+		sem_post(sem_1);
+	}
 	sem_close(sem_1);
 	sem_close(sem_2);
 	detach_block(block);
